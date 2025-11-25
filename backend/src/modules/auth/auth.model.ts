@@ -14,7 +14,7 @@ export interface IUser extends Document {
     comparePassword(password: string): Promise<boolean>;
 }
 
-const UserSchema: Schema = new Schema(
+const UserSchema = new Schema<IUser>(
     {
         name: { type: String, required: true },
         email: { type: String, required: true, unique: true },
@@ -29,11 +29,15 @@ const UserSchema: Schema = new Schema(
     { timestamps: true }
 );
 
-UserSchema.pre('save', async function (next) {
+UserSchema.pre('save', async function (next: any) {
     if (!this.isModified('password')) return next();
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password!, salt);
-    next();
+    try {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password as string, salt);
+        next();
+    } catch (error) {
+        next(error);
+    }
 });
 
 UserSchema.methods.comparePassword = async function (password: string) {
