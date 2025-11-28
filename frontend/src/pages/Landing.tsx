@@ -17,8 +17,8 @@ const Landing = () => {
               Welcome to <span className="text-primary">StudySync</span>
             </h1>
             <p className="text-xl md:text-2xl text-muted-foreground mb-8 max-w-3xl mx-auto">
-              Your personalized learning companion. Master any subject with adaptive quizzes, 
-              interactive study materials, and AI-powered doubt solving.
+              Your personalized learning companion. Master any subject with adaptive quizzes,
+              and interactive study materials.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <NavLink to="/signup">
@@ -102,11 +102,7 @@ const features = [
     title: "Comprehensive Study Materials",
     description: "Access organized notes, PDFs, and videos for every subject and topic.",
   },
-  {
-    icon: Brain,
-    title: "AI-Powered Doubt Solving",
-    description: "Get instant answers to your questions with our intelligent chatbot.",
-  },
+
   {
     icon: Zap,
     title: "Adaptive Quizzes",
@@ -120,7 +116,7 @@ const features = [
   {
     icon: Users,
     title: "Discussion Forum",
-    description: "Collaborate with peers and get help from expert teachers.",
+    description: "Collaborate with peers and get help from the community.",
   },
   {
     icon: Target,
@@ -132,7 +128,7 @@ const features = [
 const stats = [
   { value: "50K+", label: "Active Students" },
   { value: "1000+", label: "Study Materials" },
-  { value: "500+", label: "Expert Teachers" },
+  { value: "500+", label: "Practice Tests" },
   { value: "95%", label: "Success Rate" },
 ];
 

@@ -3,23 +3,26 @@ import bcrypt from 'bcryptjs';
 
 export interface IUser extends Document {
     name: string;
+    username?: string;
     email: string;
     password?: string;
-    role: 'student' | 'teacher' | 'admin';
+    role: 'student' | 'admin';
     grade?: string;
     board?: string;
     subjects?: string[];
     xp: number;
     badges: string[];
+    createdAt: Date;
     comparePassword(password: string): Promise<boolean>;
 }
 
 const UserSchema = new Schema<IUser>(
     {
         name: { type: String, required: true },
+        username: { type: String, unique: true, sparse: true },
         email: { type: String, required: true, unique: true },
         password: { type: String, required: true },
-        role: { type: String, enum: ['student', 'teacher', 'admin'], default: 'student' },
+        role: { type: String, enum: ['student', 'admin'], default: 'student' },
         grade: { type: String },
         board: { type: String },
         subjects: [{ type: String }],

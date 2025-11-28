@@ -11,9 +11,13 @@ import { Trophy, Zap, Target, BookOpen, Award, Edit2 } from "lucide-react";
 import api from "@/lib/api";
 import { useToast } from "@/hooks/use-toast";
 
+import { useAuth } from "@/hooks/useAuth";
+
 const Profile = () => {
-  const [user, setUser] = useState<any>(null);
+  const { user, updateUser } = useAuth();
+  const [localUser, setLocalUser] = useState<any>(null);
   const [stats, setStats] = useState({ xp: 0, streak: 0, completed: 0, rank: 0 });
+  const [subjectAnalytics, setSubjectAnalytics] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
 
@@ -26,13 +30,21 @@ const Profile = () => {
   });
 
   useEffect(() => {
-    fetchProfileData();
-  }, []);
+    if (user) {
+      setLocalUser(user);
+      fetchProfileData();
+    }
+  }, [user]);
 
   const fetchProfileData = async () => {
     try {
       const { data: userData } = await api.get('/auth/me');
-      setUser(userData);
+
+      // Sync auth state if needed
+      if (user && JSON.stringify(userData) !== JSON.stringify(user)) {
+        updateUser(userData);
+      }
+
       setEditForm({
         name: userData.name,
         grade: userData.grade || "",
@@ -48,8 +60,10 @@ const Profile = () => {
         xp: userData.xp || 0,
         streak: 1, // Mock
         completed: analytics.totalQuizzes || 0,
-        rank: myRank > 0 ? myRank : '-',
+        rank: analytics.rank || '-',
       });
+
+      setSubjectAnalytics(analytics.subjectAnalytics || []);
 
     } catch (error) {
       console.error("Error fetching profile:", error);
@@ -62,16 +76,19 @@ const Profile = () => {
     e.preventDefault();
     try {
       const { data } = await api.put('/profile', editForm);
-      setUser(data);
+      updateUser(data);
+      setLocalUser(data);
       setIsEditing(false);
       toast({
         title: "Profile Updated",
         description: "Your profile has been successfully updated.",
+        variant: "default",
       });
-    } catch (error) {
+    } catch (error: any) {
+      console.error("Profile Update Error:", error);
       toast({
         title: "Update Failed",
-        description: "Could not update profile. Please try again.",
+        description: error.response?.data?.message || "Could not update profile. Please try again.",
         variant: "destructive",
       });
     }
@@ -82,21 +99,24 @@ const Profile = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Profile Header */}
-      <Card className="glass gradient-primary text-white relative overflow-hidden">
-        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+      <Card className="glass relative overflow-hidden">
+        {/* <div className="absolute top-0 right-0 w-96 h-96 bg-primary/10 rounded-full blur-3xl"></div> */}
         <CardContent className="p-8 relative z-10">
           <div className="flex flex-col md:flex-row items-center gap-6">
-            <Avatar className="h-24 w-24 border-4 border-white/20">
-              <AvatarFallback className="text-3xl bg-white/20 text-white">
-                {user?.name?.charAt(0).toUpperCase()}
+            <Avatar className="h-24 w-24 border-4 border-primary/20">
+              <AvatarFallback className="text-3xl gradient-primary text-white">
+                {localUser?.name?.charAt(0).toUpperCase()}
               </AvatarFallback>
             </Avatar>
             <div className="text-center md:text-left flex-1">
               <div className="flex items-center justify-center md:justify-start gap-3 mb-2">
-                <h1 className="text-3xl font-bold">{user?.name}</h1>
+                <div>
+                  <h1 className="text-3xl font-bold">{localUser?.name}</h1>
+                  <p className="text-muted-foreground">@{localUser?.username || 'username'}</p>
+                </div>
                 <Dialog open={isEditing} onOpenChange={setIsEditing}>
                   <DialogTrigger asChild>
-                    <Button size="icon" variant="ghost" className="h-8 w-8 text-white/80 hover:text-white hover:bg-white/20">
+                    <Button size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground hover:text-primary hover:bg-primary/10">
                       <Edit2 className="h-4 w-4" />
                     </Button>
                   </DialogTrigger>
@@ -136,18 +156,18 @@ const Profile = () => {
                   </DialogContent>
                 </Dialog>
               </div>
-              <p className="text-white/90 mb-4">
+              <p className="text-muted-foreground mb-4">
                 {user?.grade ? `Class ${user.grade}` : 'Grade not set'} • {user?.board || 'Board not set'}
               </p>
               <div className="flex flex-wrap gap-2 justify-center md:justify-start">
-                <Badge variant="secondary" className="bg-white/20 text-white border-0 capitalize">
+                <Badge variant="secondary" className="bg-white/10 text-white border-white/20 capitalize">
                   {user?.role}
                 </Badge>
               </div>
             </div>
             <div className="text-center">
-              <div className="text-4xl font-bold mb-1">{stats.xp}</div>
-              <div className="text-white/80">Total XP</div>
+              <div className="text-4xl font-bold mb-1 gradient-primary bg-clip-text text-transparent">{stats.xp}</div>
+              <div className="text-muted-foreground">Total XP</div>
             </div>
           </div>
         </CardContent>
@@ -231,8 +251,20 @@ const Profile = () => {
               Subject Progress
             </CardTitle>
           </CardHeader>
-          <CardContent className="space-y-4">
-            <p className="text-muted-foreground text-center py-8">Take quizzes to see subject progress!</p>
+          <CardContent className="space-y-6">
+            {subjectAnalytics.length > 0 ? (
+              subjectAnalytics.map((subject: any, index: number) => (
+                <div key={index} className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="font-medium">{subject.subject}</span>
+                    <span className="text-muted-foreground">{Math.round(subject.accuracy)}%</span>
+                  </div>
+                  <Progress value={subject.accuracy} className="h-2" />
+                </div>
+              ))
+            ) : (
+              <p className="text-muted-foreground text-center py-8">Take quizzes to see subject progress!</p>
+            )}
           </CardContent>
         </Card>
       </div>
