@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import { Question } from './forum.model';
 import { AuthRequest } from '../../middleware/auth.middleware';
 
+import { sendNotification } from '../notifications/notifications.controller';
+
 export const createQuestion = async (req: AuthRequest, res: Response) => {
     try {
         const { title, description, tags } = req.body;
@@ -45,6 +47,49 @@ export const getQuestionById = async (req: Request, res: Response) => {
     }
 };
 
+export const updateQuestion = async (req: AuthRequest, res: Response) => {
+    try {
+        const { title, description, tags } = req.body;
+        const question = await Question.findById(req.params.id);
+
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        if (question.askedBy.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'Not authorized to update this question' });
+        }
+
+        question.title = title || question.title;
+        question.description = description || question.description;
+        question.tags = tags || question.tags;
+
+        await question.save();
+        res.json(question);
+    } catch (error) {
+        res.status(500).json({ message: (error as Error).message });
+    }
+};
+
+export const deleteQuestion = async (req: AuthRequest, res: Response) => {
+    try {
+        const question = await Question.findById(req.params.id);
+
+        if (!question) {
+            return res.status(404).json({ message: 'Question not found' });
+        }
+
+        if (question.askedBy.toString() !== req.user._id.toString()) {
+            return res.status(403).json({ message: 'Not authorized to delete this question' });
+        }
+
+        await question.deleteOne();
+        res.json({ message: 'Question deleted' });
+    } catch (error) {
+        res.status(500).json({ message: (error as Error).message });
+    }
+};
+
 export const addAnswer = async (req: AuthRequest, res: Response) => {
     try {
         const { text } = req.body;
@@ -59,6 +104,16 @@ export const addAnswer = async (req: AuthRequest, res: Response) => {
             };
             question.answers.push(answer as any);
             await question.save();
+
+            // Send notification to the question asker
+            if (question.askedBy.toString() !== req.user._id.toString()) {
+                await sendNotification(
+                    question.askedBy.toString(),
+                    `New answer on your question: "${question.title}"`,
+                    'info'
+                );
+            }
+
             res.status(201).json(question);
         } else {
             res.status(404).json({ message: 'Question not found' });

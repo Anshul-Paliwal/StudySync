@@ -125,11 +125,15 @@ const Quiz = () => {
                     <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
                       <div className="flex items-center gap-1">
                         <Clock className="h-4 w-4" />
-                        20 min {/* Placeholder duration */}
+                        {quiz.duration} min
                       </div>
                       <div className="flex items-center gap-1">
                         <Target className="h-4 w-4" />
                         {quiz.questions?.length || 0} questions
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Trophy className="h-4 w-4" />
+                        Attempts: {quiz.attemptsTaken || 0} / {quiz.maxAttempts ? quiz.maxAttempts : '∞'}
                       </div>
                     </div>
                   </div>
@@ -138,8 +142,9 @@ const Quiz = () => {
                     <Button
                       className="bg-primary text-primary-foreground hover:bg-primary/90"
                       onClick={() => navigate(`/test-simulation/${quiz._id}`)}
+                      disabled={quiz.maxAttempts && quiz.attemptsTaken >= quiz.maxAttempts}
                     >
-                      Start Quiz
+                      {quiz.maxAttempts && quiz.attemptsTaken >= quiz.maxAttempts ? 'Limit Reached' : 'Start Quiz'}
                     </Button>
                   </div>
                 </div>

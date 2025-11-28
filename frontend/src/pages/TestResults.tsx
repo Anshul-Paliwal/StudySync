@@ -79,7 +79,7 @@ const TestResults = () => {
             </div>
             <div className="text-center p-4 rounded-lg bg-muted/50">
               <Crown className="h-8 w-8 mx-auto mb-2 text-yellow-500" />
-              <p className="text-2xl font-bold text-yellow-500">+{score * 10} XP</p>
+              <p className="text-2xl font-bold text-yellow-500">+{score} XP</p>
               <p className="text-sm text-muted-foreground">XP Gained</p>
             </div>
           </div>
@@ -135,13 +135,7 @@ const TestResults = () => {
 
       {/* Actions */}
       <div className="flex flex-col md:flex-row gap-4 justify-center">
-        <Button
-          size="lg"
-          variant="outline"
-          onClick={() => navigate(`/test-simulation/${id}`)}
-        >
-          Retry Test
-        </Button>
+
         <Button
           size="lg"
           variant="secondary"

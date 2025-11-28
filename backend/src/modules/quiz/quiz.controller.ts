@@ -31,7 +31,7 @@ export const createQuiz = async (req: AuthRequest, res: Response) => {
     }
 };
 
-export const getQuizzes = async (req: Request, res: Response) => {
+export const getQuizzes = async (req: AuthRequest, res: Response) => {
     try {
         const { board, grade, subject, chapter, topic } = req.query;
         const query: any = {};
@@ -42,8 +42,25 @@ export const getQuizzes = async (req: Request, res: Response) => {
         if (chapter) query.chapter = chapter;
         if (topic) query.topic = topic;
 
-        const quizzes = await Quiz.find(query).populate('createdBy', 'name');
-        res.json(quizzes);
+        const quizzes = await Quiz.find(query).populate('createdBy', 'name').lean();
+
+        // Get attempts for the current user
+        const userAttempts = await QuizAttempt.find({ student: req.user._id });
+
+        // Create a map of quizId -> attempt count
+        const attemptMap = new Map();
+        userAttempts.forEach(attempt => {
+            const qId = attempt.quiz.toString();
+            attemptMap.set(qId, (attemptMap.get(qId) || 0) + 1);
+        });
+
+        // Add attemptsTaken to each quiz
+        const quizzesWithAttempts = quizzes.map((quiz: any) => ({
+            ...quiz,
+            attemptsTaken: attemptMap.get(quiz._id.toString()) || 0
+        }));
+
+        res.json(quizzesWithAttempts);
     } catch (error) {
         res.status(500).json({ message: (error as Error).message });
     }
@@ -99,7 +116,7 @@ export const attemptQuiz = async (req: AuthRequest, res: Response) => {
             answers: processedAnswers,
         });
 
-        const xpGained = score * 10;
+        const xpGained = score * 1;
         console.log(`[Quiz Attempt] User: ${req.user._id}, Score: ${score}, XP Gained: ${xpGained}`);
 
         // Update User XP
@@ -111,8 +128,25 @@ export const attemptQuiz = async (req: AuthRequest, res: Response) => {
             }
             const oldXp = user.xp;
             user.xp += xpGained;
+
+            // Badge Logic
+            const badges = user.badges || [];
+            if (user.xp >= 100 && !badges.includes('Bronze Scholar')) {
+                badges.push('Bronze Scholar');
+            }
+            if (user.xp >= 200 && !badges.includes('Silver Scholar')) {
+                badges.push('Silver Scholar');
+            }
+            if (user.xp >= 400 && !badges.includes('Gold Scholar')) {
+                badges.push('Gold Scholar');
+            }
+            if (user.xp >= 1000 && !badges.includes('Diamond Scholar')) {
+                badges.push('Diamond Scholar');
+            }
+            user.badges = badges;
+
             await user.save();
-            console.log(`[Quiz Attempt] XP Updated: ${oldXp} -> ${user.xp}`);
+            console.log(`[Quiz Attempt] XP Updated: ${oldXp} -> ${user.xp}, Badges: ${user.badges.join(', ')}`);
         } else {
             console.error(`[Quiz Attempt] User not found: ${req.user._id}`);
         }

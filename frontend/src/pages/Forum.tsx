@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { MessageSquare, ThumbsUp, CheckCircle, Search, Plus, Loader2 } from "lucide-react";
+import { MessageSquare, ThumbsUp, CheckCircle, Search, Plus, Loader2, Edit2, Trash2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -20,6 +20,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import api from "@/lib/api";
 import { formatDistanceToNow } from "date-fns";
+
+import { useAuth } from "@/hooks/useAuth";
 
 const Forum = () => {
   const navigate = useNavigate();
@@ -85,11 +87,83 @@ const Forum = () => {
     }
   };
 
-  const filteredPosts = posts.filter(post =>
-    post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    post.tags.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
-  );
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<'all' | 'my'>('all');
+  const [editingQuestion, setEditingQuestion] = useState<any>(null);
+
+  // ... (existing state)
+
+  const handleUpdateQuestion = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingQuestion) return;
+
+    try {
+      const tagsArray = newQuestion.tags.split(',').map(tag => tag.trim()).filter(tag => tag !== "");
+
+      await api.put(`/forum/${editingQuestion._id}`, {
+        title: newQuestion.title,
+        description: newQuestion.description,
+        tags: tagsArray,
+      });
+
+      toast({
+        title: "Question Updated",
+        description: "Your question has been successfully updated.",
+      });
+
+      setIsDialogOpen(false);
+      setEditingQuestion(null);
+      setNewQuestion({ title: "", description: "", tags: "" });
+      fetchQuestions();
+    } catch (error) {
+      console.error("Error updating question:", error);
+      toast({
+        title: "Error",
+        description: "Failed to update question.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleDeleteQuestion = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this question? This will also remove all answers.")) return;
+
+    try {
+      await api.delete(`/forum/${id}`);
+      toast({
+        title: "Question Deleted",
+        description: "Your question has been removed.",
+      });
+      fetchQuestions();
+    } catch (error) {
+      console.error("Error deleting question:", error);
+      toast({
+        title: "Error",
+        description: "Failed to delete question.",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const openEditDialog = (post: any) => {
+    setEditingQuestion(post);
+    setNewQuestion({
+      title: post.title,
+      description: post.description,
+      tags: post.tags.join(', '),
+    });
+    setIsDialogOpen(true);
+  };
+
+  const filteredPosts = posts.filter(post => {
+    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      post.tags.some((tag: string) => tag.toLowerCase().includes(searchQuery.toLowerCase()));
+
+    const matchesTab = activeTab === 'all' || (activeTab === 'my' && post.askedBy?._id === user?._id);
+
+    return matchesSearch && matchesTab;
+  });
 
   return (
     <div className="space-y-6 animate-fade-in">
@@ -99,7 +173,13 @@ const Forum = () => {
           <p className="text-muted-foreground">Ask questions, share knowledge, and learn together</p>
         </div>
 
-        <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <Dialog open={isDialogOpen} onOpenChange={(open) => {
+          setIsDialogOpen(open);
+          if (!open) {
+            setEditingQuestion(null);
+            setNewQuestion({ title: "", description: "", tags: "" });
+          }
+        }}>
           <DialogTrigger asChild>
             <Button className="gradient-primary border-0">
               <Plus className="mr-2 h-4 w-4" /> Ask Question
@@ -107,12 +187,12 @@ const Forum = () => {
           </DialogTrigger>
           <DialogContent className="sm:max-w-[525px]">
             <DialogHeader>
-              <DialogTitle>Ask a Question</DialogTitle>
+              <DialogTitle>{editingQuestion ? "Edit Question" : "Ask a Question"}</DialogTitle>
               <DialogDescription>
-                Describe your doubt clearly. Add tags to help others find it.
+                {editingQuestion ? "Update your question details." : "Describe your doubt clearly. Add tags to help others find it."}
               </DialogDescription>
             </DialogHeader>
-            <form onSubmit={handleAskQuestion}>
+            <form onSubmit={editingQuestion ? handleUpdateQuestion : handleAskQuestion}>
               <div className="grid gap-4 py-4">
                 <div className="grid gap-2">
                   <Label htmlFor="title">Title</Label>
@@ -145,22 +225,39 @@ const Forum = () => {
                 </div>
               </div>
               <DialogFooter>
-                <Button type="submit">Post Question</Button>
+                <Button type="submit">{editingQuestion ? "Update Question" : "Post Question"}</Button>
               </DialogFooter>
             </form>
           </DialogContent>
         </Dialog>
       </div>
 
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-        <Input
-          placeholder="Search discussions..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
-        />
+      {/* Tabs & Search */}
+      <div className="flex flex-col md:flex-row gap-4 items-center justify-between">
+        <div className="flex p-1 bg-muted rounded-lg">
+          <button
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'all' ? 'bg-white shadow text-primary' : 'text-muted-foreground hover:text-primary'}`}
+            onClick={() => setActiveTab('all')}
+          >
+            All Discussions
+          </button>
+          <button
+            className={`px-4 py-2 text-sm font-medium rounded-md transition-all ${activeTab === 'my' ? 'bg-white shadow text-primary' : 'text-muted-foreground hover:text-primary'}`}
+            onClick={() => setActiveTab('my')}
+          >
+            My Questions
+          </button>
+        </div>
+
+        <div className="relative w-full md:w-64">
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Input
+            placeholder="Search discussions..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="pl-9 h-10"
+          />
+        </div>
       </div>
 
       {/* Forum Posts */}
@@ -171,18 +268,17 @@ const Forum = () => {
           </div>
         ) : filteredPosts.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            No discussions found. Be the first to ask a question!
+            {activeTab === 'my' ? "You haven't asked any questions yet." : "No discussions found. Be the first to ask a question!"}
           </div>
         ) : (
           filteredPosts.map((post, index) => (
             <Card
               key={post._id || index}
-              className="glass hover:shadow-lg transition-all duration-300 cursor-pointer"
-              onClick={() => navigate(`/forum/${post._id}`)}
+              className="glass hover:shadow-lg transition-all duration-300"
             >
               <CardContent className="p-6">
                 <div className="flex gap-4">
-                  <Avatar className="h-10 w-10">
+                  <Avatar className="h-10 w-10 cursor-pointer" onClick={() => navigate(`/forum/${post._id}`)}>
                     <AvatarFallback className="gradient-primary text-white">
                       {post.askedBy?.name?.[0] || "?"}
                     </AvatarFallback>
@@ -190,12 +286,26 @@ const Forum = () => {
 
                   <div className="flex-1 space-y-3">
                     <div>
-                      <div className="flex items-center gap-2 mb-1">
-                        <h3 className="font-semibold text-lg hover:text-primary transition-colors">
-                          {post.title}
-                        </h3>
-                        {post.isSolved && (
-                          <CheckCircle className="h-5 w-5 text-success" />
+                      <div className="flex items-center justify-between mb-1">
+                        <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate(`/forum/${post._id}`)}>
+                          <h3 className="font-semibold text-lg hover:text-primary transition-colors">
+                            {post.title}
+                          </h3>
+                          {post.isSolved && (
+                            <CheckCircle className="h-5 w-5 text-success" />
+                          )}
+                        </div>
+
+                        {/* Edit/Delete Actions for Owner */}
+                        {user && post.askedBy?._id === user._id && (
+                          <div className="flex items-center gap-2">
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-primary" onClick={() => openEditDialog(post)}>
+                              <Edit2 className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="icon" className="h-8 w-8 text-muted-foreground hover:text-destructive" onClick={() => handleDeleteQuestion(post._id)}>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
                         )}
                       </div>
                       <div className="flex items-center gap-2 text-sm text-muted-foreground">
@@ -205,7 +315,7 @@ const Forum = () => {
                       </div>
                     </div>
 
-                    <p className="text-muted-foreground line-clamp-2">{post.description}</p>
+                    <p className="text-muted-foreground line-clamp-2 cursor-pointer" onClick={() => navigate(`/forum/${post._id}`)}>{post.description}</p>
 
                     <div className="flex items-center gap-4">
                       <div className="flex flex-wrap gap-2">
@@ -222,7 +332,7 @@ const Forum = () => {
                         <ThumbsUp className="h-4 w-4" />
                         {post.upvotes?.length || 0}
                       </button>
-                      <button className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors">
+                      <button className="flex items-center gap-2 text-muted-foreground hover:text-primary transition-colors" onClick={() => navigate(`/forum/${post._id}`)}>
                         <MessageSquare className="h-4 w-4" />
                         {post.answers?.length || 0} replies
                       </button>

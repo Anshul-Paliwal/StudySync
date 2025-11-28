@@ -124,7 +124,9 @@ const TestSimulation = () => {
 
   const questions = quiz.questions;
   const progress = ((currentQuestion + 1) / questions.length) * 100;
-  const isTimeCritical = timeRemaining < 300; // Less than 5 minutes
+
+  const totalDuration = parseInt(quiz.duration || 30) * 60;
+  const isTimeCritical = timeRemaining < (totalDuration * 0.1); // Less than 10% remaining
 
   return (
     <div className="space-y-6 animate-fade-in max-w-4xl mx-auto">

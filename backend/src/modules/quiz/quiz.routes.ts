@@ -6,9 +6,9 @@ const router = express.Router();
 
 router.post('/seed', seedQuiz);
 router.post('/', protect, authorize('admin'), createQuiz);
-router.get('/', getQuizzes);
+router.get('/', protect, getQuizzes);
 router.get('/admin/results', protect, authorize('admin'), getAllQuizAttempts);
-router.get('/:id', getQuizById);
+router.get('/:id', protect, getQuizById);
 router.put('/:id', protect, authorize('admin'), updateQuiz);
 router.delete('/:id', protect, authorize('admin'), deleteQuiz);
 router.post('/attempt', protect, attemptQuiz);
