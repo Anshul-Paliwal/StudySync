@@ -82,7 +82,7 @@ export const Navbar = ({ onMenuClick, showMenuButton = false, hideGetStarted = f
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center gap-4">
             {showMenuButton && (
-              <Button variant="ghost" size="icon" onClick={onMenuClick}>
+              <Button variant="ghost" size="icon" onClick={onMenuClick} className="md:hidden">
                 <Menu className="h-5 w-5" />
               </Button>
             )}
