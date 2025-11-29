@@ -66,15 +66,15 @@ const App = () => (
               <Route path="/forum/:id" element={<ForumPost />} />
               <Route path="/leaderboard" element={<Leaderboard />} />
               <Route path="/profile" element={<Profile />} />
-            </Route>
 
-            {/* Admin Routes */}
-            <Route element={<AdminGate />}>
-              <Route element={<AdminLayout />}>
-                <Route path="/admin/upload" element={<AdminUpload />} />
-                <Route path="/admin/materials" element={<AdminMaterials />} />
-                <Route path="/admin/edit/:id" element={<AdminUpload />} />
-                <Route path="/admin/quiz" element={<AdminQuiz />} />
+              {/* Admin Routes */}
+              <Route element={<AdminGate />}>
+                <Route element={<AdminLayout />}>
+                  <Route path="/admin/upload" element={<AdminUpload />} />
+                  <Route path="/admin/materials" element={<AdminMaterials />} />
+                  <Route path="/admin/edit/:id" element={<AdminUpload />} />
+                  <Route path="/admin/quiz" element={<AdminQuiz />} />
+                </Route>
               </Route>
             </Route>
           </Route>

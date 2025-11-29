@@ -132,6 +132,15 @@ export const Navbar = ({ onMenuClick, showMenuButton = false, hideGetStarted = f
             >
               Leaderboard
             </NavLink>
+            {useAuth().user?.role === 'admin' && (
+              <NavLink
+                to="/admin/materials"
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                activeClassName="text-primary"
+              >
+                Admin
+              </NavLink>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -197,14 +206,6 @@ export const Navbar = ({ onMenuClick, showMenuButton = false, hideGetStarted = f
                     <DropdownMenuItem>
                       <NavLink to="/profile" className="w-full">Profile</NavLink>
                     </DropdownMenuItem>
-                    {useAuth().user?.role === 'admin' && (
-                      <DropdownMenuItem>
-                        <NavLink to="/admin/materials" className="w-full flex items-center gap-2">
-                          <Shield className="h-4 w-4" />
-                          Admin Dashboard
-                        </NavLink>
-                      </DropdownMenuItem>
-                    )}
                     <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-500">
                       Logout
                     </DropdownMenuItem>
