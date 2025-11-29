@@ -3,7 +3,7 @@ import { Navbar } from "@/components/Navbar";
 import { Outlet } from "react-router-dom";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { NavLink } from "@/components/NavLink";
-import { LayoutDashboard, BookOpen, GraduationCap, MessageSquare, Trophy, User, LogOut } from "lucide-react";
+import { LayoutDashboard, BookOpen, GraduationCap, MessageSquare, Trophy, User, LogOut, Shield } from "lucide-react";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 
@@ -49,6 +49,9 @@ export const DashboardLayout = () => {
             <NavItem to="/quiz" icon={GraduationCap}>Quizzes</NavItem>
             <NavItem to="/forum" icon={MessageSquare}>Forum</NavItem>
             <NavItem to="/leaderboard" icon={Trophy}>Leaderboard</NavItem>
+            {useAuth().user?.username === '500119480' && (
+              <NavItem to="/admin/upload" icon={Shield}>Admin Dashboard</NavItem>
+            )}
           </div>
 
           {/* Footer */}

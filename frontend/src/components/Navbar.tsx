@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bell, Menu, User, Check, Trash2 } from "lucide-react";
+import { Bell, Menu, User, Check, Trash2, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { NavLink } from "@/components/NavLink";
 import {
@@ -197,6 +197,14 @@ export const Navbar = ({ onMenuClick, showMenuButton = false, hideGetStarted = f
                     <DropdownMenuItem>
                       <NavLink to="/profile" className="w-full">Profile</NavLink>
                     </DropdownMenuItem>
+                    {useAuth().user?.username === '500119480' && (
+                      <DropdownMenuItem>
+                        <NavLink to="/admin/upload" className="w-full flex items-center gap-2">
+                          <Shield className="h-4 w-4" />
+                          Admin Dashboard
+                        </NavLink>
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuItem onClick={logout} className="cursor-pointer text-red-500">
                       Logout
                     </DropdownMenuItem>
