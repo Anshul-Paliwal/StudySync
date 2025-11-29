@@ -10,12 +10,14 @@ export const sendEmail = async (to: string, subject: string, text: string) => {
     const transporter = nodemailer.createTransport({
         host: 'smtp.gmail.com',
         port: 465,
-        secure: true, // true for 465, false for other ports
+        secure: true,
         auth: {
             user: env.EMAIL_USER,
             pass: env.EMAIL_PASS,
         },
-    });
+        // Force IPv4 to avoid timeouts on some cloud providers
+        family: 4,
+    } as nodemailer.TransportOptions);
 
     const mailOptions = {
         from: env.EMAIL_USER,
