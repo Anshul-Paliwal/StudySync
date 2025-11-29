@@ -11,6 +11,7 @@ const envSchema = z.object({
     CLOUDINARY_CLOUD_NAME: z.string().optional(),
     CLOUDINARY_API_KEY: z.string().optional(),
     CLOUDINARY_API_SECRET: z.string().optional(),
+    CLIENT_URL: z.string().default('http://localhost:5173'),
 });
 
 export const env = envSchema.parse(process.env);

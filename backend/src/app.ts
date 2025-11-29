@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import { env } from './config/env';
 
 // Routes
 import authRoutes from './modules/auth/auth.routes';
@@ -19,7 +20,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors({
-    origin: ['http://localhost:5173', 'http://localhost:8080'],
+    origin: [env.CLIENT_URL, 'http://localhost:5173', 'http://localhost:8080'],
     credentials: true
 }));
 app.use(helmet());
