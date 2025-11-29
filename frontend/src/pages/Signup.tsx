@@ -10,7 +10,7 @@ import { useToast } from "@/hooks/use-toast";
 import { User } from "lucide-react";
 
 const Signup = () => {
-  const [step, setStep] = useState<'signup' | 'otp'>('signup');
+  const [step, setStep] = useState<'email' | 'otp' | 'details'>('email');
   const [otp, setOtp] = useState("");
   const [formData, setFormData] = useState({
     name: "",
@@ -21,26 +21,19 @@ const Signup = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleSignup = async (e: React.FormEvent) => {
+  const handleSendOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      await api.post('/auth/register', {
-        name: formData.name,
-        username: formData.username,
-        email: formData.email,
-        password: formData.password,
-        role: 'student'
-      });
-
+      await api.post('/auth/send-signup-otp', { email: formData.email });
       setStep('otp');
       toast({
         title: "OTP Sent!",
-        description: `Please check your email (${formData.email}) for the verification code.`,
+        description: `Verification code sent to ${formData.email}`,
       });
     } catch (error: any) {
       toast({
-        title: "Signup Failed",
-        description: error.response?.data?.message || "Something went wrong",
+        title: "Error",
+        description: error.response?.data?.message || "Could not send OTP",
         variant: "destructive",
       });
     }
@@ -49,19 +42,15 @@ const Signup = () => {
   const handleVerifyOtp = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
-      const { data } = await api.post('/auth/verify-email', {
+      await api.post('/auth/verify-signup-otp', {
         email: formData.email,
         otp
       });
-
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data));
-
+      setStep('details');
       toast({
-        title: "Account Verified!",
-        description: "Welcome to StudySync. Let's start learning!",
+        title: "Email Verified!",
+        description: "Please complete your registration.",
       });
-      navigate("/dashboard");
     } catch (error: any) {
       toast({
         title: "Verification Failed",
@@ -71,17 +60,30 @@ const Signup = () => {
     }
   };
 
-  const handleResendOtp = async () => {
+  const handleRegister = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      await api.post('/auth/resend-otp', { email: formData.email });
-      toast({
-        title: "OTP Resent",
-        description: "A new OTP has been sent to your email.",
+      const { data } = await api.post('/auth/register', {
+        name: formData.name,
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        otp, // Send OTP again for final verification
+        role: 'student'
       });
+
+      localStorage.setItem('token', data.token);
+      localStorage.setItem('user', JSON.stringify(data));
+
+      toast({
+        title: "Welcome to StudySync!",
+        description: "Your account has been successfully created.",
+      });
+      navigate("/dashboard");
     } catch (error: any) {
       toast({
-        title: "Failed to Resend",
-        description: error.response?.data?.message || "Could not resend OTP",
+        title: "Registration Failed",
+        description: error.response?.data?.message || "Something went wrong",
         variant: "destructive",
       });
     }
@@ -97,17 +99,67 @@ const Signup = () => {
             <span className="text-3xl font-bold text-white">S</span>
           </div>
           <CardTitle className="text-3xl">
-            {step === 'signup' ? 'Join StudySync' : 'Verify Email'}
+            {step === 'email' && 'Join StudySync'}
+            {step === 'otp' && 'Verify Email'}
+            {step === 'details' && 'Complete Profile'}
           </CardTitle>
           <CardDescription>
-            {step === 'signup'
-              ? 'Create your account to start learning'
-              : `Enter the OTP sent to ${formData.email}`}
+            {step === 'email' && 'Enter your email to get started'}
+            {step === 'otp' && `Enter the code sent to ${formData.email}`}
+            {step === 'details' && 'Choose your username and password'}
           </CardDescription>
         </CardHeader>
         <CardContent>
-          {step === 'signup' ? (
-            <form onSubmit={handleSignup} className="space-y-4">
+          {step === 'email' && (
+            <form onSubmit={handleSendOtp} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email Address</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="student@studysync.com"
+                  value={formData.email}
+                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full gradient-primary border-0">
+                Send Verification Code
+              </Button>
+            </form>
+          )}
+
+          {step === 'otp' && (
+            <form onSubmit={handleVerifyOtp} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="otp">Verification Code</Label>
+                <Input
+                  id="otp"
+                  type="text"
+                  placeholder="Enter 6-digit code"
+                  value={otp}
+                  onChange={(e) => setOtp(e.target.value)}
+                  maxLength={6}
+                  className="text-center text-2xl tracking-widest"
+                  required
+                />
+              </div>
+              <Button type="submit" className="w-full gradient-primary border-0">
+                Verify Email
+              </Button>
+              <Button
+                type="button"
+                variant="ghost"
+                className="w-full"
+                onClick={() => setStep('email')}
+              >
+                Change Email
+              </Button>
+            </form>
+          )}
+
+          {step === 'details' && (
+            <form onSubmit={handleRegister} className="space-y-4">
               <div className="space-y-2">
                 <Label htmlFor="name">Full Name</Label>
                 <Input
@@ -136,17 +188,6 @@ const Signup = () => {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="student@studysync.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
                 <Label htmlFor="password">Password</Label>
                 <Input
                   id="password"
@@ -162,35 +203,6 @@ const Signup = () => {
                 Create Account
               </Button>
             </form>
-          ) : (
-            <form onSubmit={handleVerifyOtp} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="otp">One-Time Password</Label>
-                <Input
-                  id="otp"
-                  type="text"
-                  placeholder="Enter 6-digit OTP"
-                  value={otp}
-                  onChange={(e) => setOtp(e.target.value)}
-                  maxLength={6}
-                  className="text-center text-2xl tracking-widest"
-                  required
-                />
-              </div>
-
-              <Button type="submit" className="w-full gradient-primary border-0">
-                Verify & Login
-              </Button>
-
-              <Button
-                type="button"
-                variant="ghost"
-                className="w-full"
-                onClick={handleResendOtp}
-              >
-                Resend OTP
-              </Button>
-            </form>
           )}
 
           <div className="mt-6">
@@ -202,7 +214,6 @@ const Signup = () => {
                 <span className="bg-card px-2 text-muted-foreground">Or continue with</span>
               </div>
             </div>
-            {/* Social Buttons Removed as per request */}
           </div>
 
           <p className="text-center text-sm text-muted-foreground mt-6">
