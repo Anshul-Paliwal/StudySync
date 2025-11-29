@@ -1,9 +1,13 @@
 import { Request, Response } from 'express';
+import dns from 'dns';
+import net from 'net';
+import nodemailer from 'nodemailer';
 import { User } from './auth.model';
 import { Otp } from './otp.model';
 import { generateToken } from '../../utils/jwt';
 import { AuthRequest } from '../../middleware/auth.middleware';
 import { sendEmail } from '../../utils/email';
+import { env } from '../../config/env';
 
 export const sendSignupOtp = async (req: Request, res: Response) => {
     const { email } = req.body;
@@ -134,6 +138,92 @@ export const getMe = async (req: AuthRequest, res: Response) => {
         res.json(user);
     } catch (error) {
         res.status(500).json({ message: (error as Error).message });
+    }
+};
+
+export const testEmailConnection = async (req: Request, res: Response) => {
+    const logs: string[] = [];
+    const log = (msg: string) => logs.push(`[${new Date().toISOString()}] ${msg}`);
+
+    try {
+        log('Starting Email Diagnostic...');
+
+        // 1. Check Environment Variables
+        log(`EMAIL_USER: ${env.EMAIL_USER ? 'Set' : 'Missing'}`);
+        log(`EMAIL_PASS: ${env.EMAIL_PASS ? 'Set' : 'Missing'}`);
+        if (env.EMAIL_PASS) {
+            log(`EMAIL_PASS Length: ${env.EMAIL_PASS.length}`);
+            log(`EMAIL_PASS has spaces: ${env.EMAIL_PASS.includes(' ')}`);
+        }
+
+        // 2. DNS Resolution
+        log('Resolving smtp.gmail.com...');
+        try {
+            const addresses = await new Promise<string[]>((resolve, reject) => {
+                dns.resolve('smtp.gmail.com', (err, addresses) => {
+                    if (err) reject(err);
+                    else resolve(addresses);
+                });
+            });
+            log(`DNS Resolution Success: ${JSON.stringify(addresses)}`);
+        } catch (err) {
+            log(`DNS Resolution Failed: ${(err as Error).message}`);
+        }
+
+        // 3. Socket Connection Test (Port 465)
+        log('Testing TCP Connection to smtp.gmail.com:465...');
+        try {
+            await new Promise<void>((resolve, reject) => {
+                const socket = new net.Socket();
+                socket.setTimeout(5000); // 5s timeout
+
+                socket.on('connect', () => {
+                    log('Socket Connected Successfully!');
+                    socket.destroy();
+                    resolve();
+                });
+
+                socket.on('timeout', () => {
+                    socket.destroy();
+                    reject(new Error('Socket Timeout'));
+                });
+
+                socket.on('error', (err) => {
+                    reject(err);
+                });
+
+                socket.connect(465, 'smtp.gmail.com');
+            });
+        } catch (err) {
+            log(`Socket Connection Failed: ${(err as Error).message}`);
+        }
+
+        // 4. Nodemailer Verify
+        log('Testing Nodemailer Transporter...');
+        const transporter = nodemailer.createTransport({
+            service: 'gmail',
+            auth: {
+                user: env.EMAIL_USER,
+                pass: env.EMAIL_PASS,
+            },
+            family: 4,
+            logger: true,
+            debug: true,
+            connectionTimeout: 5000,
+        } as nodemailer.TransportOptions);
+
+        try {
+            await transporter.verify();
+            log('Nodemailer Verify Success! ✅');
+        } catch (err) {
+            log(`Nodemailer Verify Failed: ${(err as Error).message}`);
+        }
+
+        res.json({ message: 'Diagnostic Complete', logs });
+
+    } catch (error) {
+        log(`Unexpected Error: ${(error as Error).message}`);
+        res.status(500).json({ message: 'Diagnostic Failed', logs });
     }
 };
 

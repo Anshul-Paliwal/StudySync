@@ -1,9 +1,10 @@
 import express from 'express';
-import { register, login, getMe, updateProfile, sendSignupOtp, verifySignupOtp } from './auth.controller';
+import { register, login, getMe, updateProfile, sendSignupOtp, verifySignupOtp, testEmailConnection } from './auth.controller';
 import { protect } from '../../middleware/auth.middleware';
 
 const router = express.Router();
 
+router.get('/test-email-connection', testEmailConnection);
 router.post('/send-signup-otp', sendSignupOtp);
 router.post('/verify-signup-otp', verifySignupOtp);
 router.post('/register', register);
