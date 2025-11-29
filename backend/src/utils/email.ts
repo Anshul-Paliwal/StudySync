@@ -8,7 +8,10 @@ export const sendEmail = async (to: string, subject: string, text: string) => {
     }
 
     const transporter = nodemailer.createTransport({
-        service: 'gmail',
+        host: 'smtp.gmail.com',
+        port: 587,
+        secure: false, // true for 465, false for other ports
+        requireTLS: true,
         auth: {
             user: env.EMAIL_USER,
             pass: env.EMAIL_PASS,
@@ -16,8 +19,8 @@ export const sendEmail = async (to: string, subject: string, text: string) => {
         // Force IPv4 to avoid timeouts on some cloud providers
         family: 4,
         // Add timeouts and logging for debugging
-        connectionTimeout: 10000, // 10 seconds
-        greetingTimeout: 5000,    // 5 seconds
+        connectionTimeout: 10000,
+        greetingTimeout: 5000,
         logger: true,
         debug: true,
     } as nodemailer.TransportOptions);
