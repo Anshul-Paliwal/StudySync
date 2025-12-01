@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
+    --background: 210 20% 96%;
     --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 84% 4.9%;
@@ -15,7 +15,7 @@
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted-foreground: 215.4 16.3% 30%;
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
     --destructive: 0 84.2% 60.2%;
@@ -90,8 +90,12 @@
     @apply border-border;
   }
 
+  html {
+    @apply bg-background;
+  }
+
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground min-h-screen;
     font-feature-settings: "rlig" 1, "calt" 1;
   }
 
@@ -103,11 +107,24 @@
   h6 {
     @apply font-semibold tracking-tight;
   }
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  *::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Hide scrollbar for IE, Edge and Firefox */
+  * {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+  }
 }
 
 @layer utilities {
   .glass {
-    @apply bg-card/40 backdrop-blur-xl border border-border/50;
+    @apply bg-card border border-border shadow-sm;
   }
 
   .shadow-glow {
@@ -139,19 +156,19 @@
   }
 
   .gradient-secondary {
-    @apply bg-secondary dark:bg-gradient-to-r dark:from-warning dark:to-orange-500;
+    @apply bg-orange-500 dark:bg-gradient-to-r dark:from-warning dark:to-orange-500;
   }
 
   .gradient-accent {
-    @apply bg-accent dark:bg-gradient-to-r dark:from-purple-500 dark:to-pink-500;
+    @apply bg-purple-500 dark:bg-gradient-to-r dark:from-purple-500 dark:to-pink-500;
   }
 
   .gradient-success {
-    @apply bg-success dark:bg-gradient-to-r dark:from-green-500 dark:to-emerald-500;
+    @apply bg-green-500 dark:bg-gradient-to-r dark:from-green-500 dark:to-emerald-500;
   }
 
   .gradient-warning {
-    @apply bg-warning dark:bg-gradient-to-r dark:from-yellow-400 dark:to-amber-600;
+    @apply bg-yellow-500 dark:bg-gradient-to-r dark:from-yellow-400 dark:to-amber-600;
   }
 }
 
@@ -199,4 +216,37 @@
   50% {
     opacity: 0.8;
   }
+}
+
+/* React Quill Dark Mode Overrides */
+.dark .ql-toolbar.ql-snow {
+  @apply border-border bg-muted/50 text-foreground;
+}
+
+.dark .ql-container.ql-snow {
+  @apply border-border bg-card text-foreground;
+}
+
+.dark .ql-snow .ql-stroke {
+  @apply stroke-foreground;
+}
+
+.dark .ql-snow .ql-fill {
+  @apply fill-foreground;
+}
+
+.dark .ql-snow .ql-picker {
+  @apply text-foreground;
+}
+
+.dark .ql-snow .ql-picker-options {
+  @apply bg-popover border-border;
+}
+
+.dark .ql-snow .ql-picker-item:hover {
+  @apply text-primary;
+}
+
+.dark .ql-snow .ql-picker-item.ql-selected {
+  @apply text-primary font-bold;
 }

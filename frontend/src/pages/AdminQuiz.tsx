@@ -252,14 +252,14 @@ const AdminQuiz = () => {
                 if (val === "create" && activeTab !== "create") resetForm();
                 setActiveTab(val);
             }} className="space-y-6">
-                <TabsList className="grid w-full grid-cols-3 bg-slate-900">
+                <TabsList className="grid w-full grid-cols-3 bg-muted">
                     <TabsTrigger value="manage">Manage Quizzes</TabsTrigger>
                     <TabsTrigger value="create">{editingQuizId ? "Edit Quiz" : "Create Quiz"}</TabsTrigger>
                     <TabsTrigger value="results">View Results</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="manage">
-                    <Card className="bg-slate-900 border-slate-800">
+                    <Card className="bg-card shadow-sm border">
                         <CardHeader>
                             <CardTitle>All Quizzes</CardTitle>
                         </CardHeader>
@@ -334,20 +334,20 @@ const AdminQuiz = () => {
 
                 <TabsContent value="create" className="space-y-8">
                     <div className="grid gap-8">
-                        <Card className="bg-slate-900 border-slate-800">
+                        <Card className="bg-card shadow-sm border">
                             <CardHeader>
                                 <CardTitle>{editingQuizId ? "Edit Quiz Details" : "New Quiz Details"}</CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-6">
                                 <div className="space-y-2">
                                     <Label>Quiz Title</Label>
-                                    <Input placeholder="e.g., Thermodynamics Mastery Test" value={quizData.title} onChange={(e) => setQuizData({ ...quizData, title: e.target.value })} className="bg-slate-950 border-slate-800" />
+                                    <Input placeholder="e.g., Thermodynamics Mastery Test" value={quizData.title} onChange={(e) => setQuizData({ ...quizData, title: e.target.value })} className="bg-background border-border" />
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label>Board</Label>
                                         <Select value={quizData.board} onValueChange={(val) => setQuizData({ ...quizData, board: val })}>
-                                            <SelectTrigger className="bg-slate-950 border-slate-800"><SelectValue placeholder="Select Board" /></SelectTrigger>
+                                            <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select Board" /></SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="CBSE">CBSE</SelectItem>
                                                 <SelectItem value="ICSE">ICSE</SelectItem>
@@ -357,14 +357,14 @@ const AdminQuiz = () => {
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Topic</Label>
-                                        <Input placeholder="e.g., Laws of Thermodynamics" value={quizData.topic} onChange={(e) => setQuizData({ ...quizData, topic: e.target.value })} className="bg-slate-950 border-slate-800" />
+                                        <Input placeholder="e.g., Laws of Thermodynamics" value={quizData.topic} onChange={(e) => setQuizData({ ...quizData, topic: e.target.value })} className="bg-background border-border" />
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label>Subject</Label>
                                         <Select value={quizData.subject} onValueChange={(val) => setQuizData({ ...quizData, subject: val })}>
-                                            <SelectTrigger className="bg-slate-950 border-slate-800"><SelectValue placeholder="Select Subject" /></SelectTrigger>
+                                            <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select Subject" /></SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="Physics">Physics</SelectItem>
                                                 <SelectItem value="Chemistry">Chemistry</SelectItem>
@@ -376,7 +376,7 @@ const AdminQuiz = () => {
                                     <div className="space-y-2">
                                         <Label>Class</Label>
                                         <Select value={quizData.grade} onValueChange={(val) => setQuizData({ ...quizData, grade: val })}>
-                                            <SelectTrigger className="bg-slate-950 border-slate-800"><SelectValue placeholder="Select Class" /></SelectTrigger>
+                                            <SelectTrigger className="bg-background border-border"><SelectValue placeholder="Select Class" /></SelectTrigger>
                                             <SelectContent>
                                                 <SelectItem value="11">Class 11</SelectItem>
                                                 <SelectItem value="12">Class 12</SelectItem>
@@ -387,20 +387,20 @@ const AdminQuiz = () => {
                                 <div className="grid grid-cols-2 gap-4">
                                     <div className="space-y-2">
                                         <Label>Chapter</Label>
-                                        <Input placeholder="e.g., Thermodynamics" value={quizData.chapter} onChange={(e) => setQuizData({ ...quizData, chapter: e.target.value })} className="bg-slate-950 border-slate-800" />
+                                        <Input placeholder="e.g., Thermodynamics" value={quizData.chapter} onChange={(e) => setQuizData({ ...quizData, chapter: e.target.value })} className="bg-background border-border" />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Time Limit (minutes)</Label>
-                                        <Input type="number" value={quizData.timeLimit} onChange={(e) => setQuizData({ ...quizData, timeLimit: parseInt(e.target.value) })} className="bg-slate-950 border-slate-800" />
+                                        <Input type="number" value={quizData.timeLimit} onChange={(e) => setQuizData({ ...quizData, timeLimit: parseInt(e.target.value) })} className="bg-background border-border" />
                                     </div>
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Max Attempts (Optional)</Label>
-                                    <Input type="number" placeholder="Unlimited" value={quizData.maxAttempts} onChange={(e) => setQuizData({ ...quizData, maxAttempts: e.target.value })} className="bg-slate-950 border-slate-800" />
+                                    <Input type="number" placeholder="Unlimited" value={quizData.maxAttempts} onChange={(e) => setQuizData({ ...quizData, maxAttempts: e.target.value })} className="bg-background border-border" />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Description</Label>
-                                    <Textarea placeholder="Brief description..." value={quizData.description} onChange={(e) => setQuizData({ ...quizData, description: e.target.value })} className="bg-slate-950 border-slate-800" />
+                                    <Textarea placeholder="Brief description..." value={quizData.description} onChange={(e) => setQuizData({ ...quizData, description: e.target.value })} className="bg-background border-border" />
                                 </div>
                             </CardContent>
                         </Card>
@@ -411,24 +411,24 @@ const AdminQuiz = () => {
                                 <Button variant="outline" onClick={addQuestion} className="gap-2"><Plus className="h-4 w-4" /> Add Question</Button>
                             </div>
                             {questions.map((q, qIndex) => (
-                                <Card key={qIndex} className="bg-slate-900 border-slate-800 relative group">
+                                <Card key={qIndex} className="bg-card shadow-sm border relative group">
                                     <CardContent className="p-6 space-y-4">
                                         <div className="flex items-start gap-4">
                                             <div className="flex-1 space-y-2">
                                                 <Label>Question {qIndex + 1}</Label>
-                                                <Input placeholder="Enter question text..." value={q.questionText} onChange={(e) => updateQuestion(qIndex, "questionText", e.target.value)} className="bg-slate-950 border-slate-800 font-medium" />
+                                                <Input placeholder="Enter question text..." value={q.questionText} onChange={(e) => updateQuestion(qIndex, "questionText", e.target.value)} className="bg-background border-border font-medium" />
                                             </div>
                                             {questions.length > 1 && (
                                                 <Button variant="ghost" size="icon" onClick={() => removeQuestion(qIndex)} className="text-slate-500 hover:text-red-500 mt-8"><Trash2 className="h-4 w-4" /></Button>
                                             )}
                                         </div>
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-4 border-l-2 border-slate-800">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pl-4 border-l-2 border-border">
                                             {q.options.map((opt, oIndex) => (
                                                 <div key={oIndex} className="flex items-center gap-2">
-                                                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors ${q.correctOption === oIndex ? "border-green-500 bg-green-500/20 text-green-500" : "border-slate-600 hover:border-slate-400"}`} onClick={() => updateQuestion(qIndex, "correctOption", oIndex)}>
+                                                    <div className={`w-6 h-6 rounded-full border-2 flex items-center justify-center cursor-pointer transition-colors ${q.correctOption === oIndex ? "border-green-500 bg-green-500/20 text-green-500" : "border-muted-foreground/50 hover:border-muted-foreground"}`} onClick={() => updateQuestion(qIndex, "correctOption", oIndex)}>
                                                         {q.correctOption === oIndex && <CheckCircle className="h-4 w-4" />}
                                                     </div>
-                                                    <Input placeholder={`Option ${oIndex + 1}`} value={opt} onChange={(e) => updateOption(qIndex, oIndex, e.target.value)} className={`bg-slate-950 border-slate-800 ${q.correctOption === oIndex ? "border-green-500/50" : ""}`} />
+                                                    <Input placeholder={`Option ${oIndex + 1}`} value={opt} onChange={(e) => updateOption(qIndex, oIndex, e.target.value)} className={`bg-background border-border ${q.correctOption === oIndex ? "border-green-500/50" : ""}`} />
                                                 </div>
                                             ))}
                                         </div>
@@ -447,7 +447,7 @@ const AdminQuiz = () => {
                 </TabsContent>
 
                 <TabsContent value="results">
-                    <Card className="bg-slate-900 border-slate-800">
+                    <Card className="bg-card shadow-sm border">
                         <CardHeader className="flex flex-row items-center justify-between">
                             <div className="flex items-center gap-4">
                                 <CardTitle>Student Attempts</CardTitle>

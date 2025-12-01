@@ -197,13 +197,13 @@ const AdminUpload = () => {
 
             <div className="mb-8">
                 <h1 className="text-3xl font-bold mb-2">{id ? "Edit Topic" : "Create New Topic"}</h1>
-                <p className="text-slate-400">Add rich study materials, PDFs, and videos for a specific topic.</p>
+                <p className="text-muted-foreground">Add rich study materials, PDFs, and videos for a specific topic.</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                 {/* Upload Form */}
                 <div className="lg:col-span-2 space-y-8">
-                    <Card className="bg-slate-900 border-slate-800">
+                    <Card className="bg-card border-border">
                         <CardHeader>
                             <CardTitle>Topic Details</CardTitle>
                             <CardDescription>Metadata for categorization.</CardDescription>
@@ -216,7 +216,7 @@ const AdminUpload = () => {
                                     value={formData.title}
                                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
                                     required
-                                    className="bg-slate-950 border-slate-800 focus:border-indigo-500"
+                                    className="bg-background border-border focus:border-indigo-500"
                                 />
                             </div>
 
@@ -227,7 +227,7 @@ const AdminUpload = () => {
                                         value={formData.grade}
                                         onValueChange={(val) => setFormData({ ...formData, grade: val })}
                                     >
-                                        <SelectTrigger className="bg-slate-950 border-slate-800">
+                                        <SelectTrigger className="bg-background border-border">
                                             <SelectValue placeholder="Select Class" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -242,7 +242,7 @@ const AdminUpload = () => {
                                         value={formData.subject}
                                         onValueChange={(val) => setFormData({ ...formData, subject: val })}
                                     >
-                                        <SelectTrigger className="bg-slate-950 border-slate-800">
+                                        <SelectTrigger className="bg-background border-border">
                                             <SelectValue placeholder="Select Subject" />
                                         </SelectTrigger>
                                         <SelectContent>
@@ -262,7 +262,7 @@ const AdminUpload = () => {
                                         placeholder="e.g., Thermodynamics"
                                         value={formData.chapter}
                                         onChange={(e) => setFormData({ ...formData, chapter: e.target.value })}
-                                        className="bg-slate-950 border-slate-800"
+                                        className="bg-background border-border"
                                     />
                                 </div>
                                 <div className="space-y-2">
@@ -271,7 +271,7 @@ const AdminUpload = () => {
                                         placeholder="e.g., Laws of Thermodynamics"
                                         value={formData.topic}
                                         onChange={(e) => setFormData({ ...formData, topic: e.target.value })}
-                                        className="bg-slate-950 border-slate-800"
+                                        className="bg-background border-border"
                                     />
                                 </div>
                             </div>
@@ -282,7 +282,7 @@ const AdminUpload = () => {
                                     placeholder="Brief overview..."
                                     value={formData.description}
                                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                                    className="bg-slate-950 border-slate-800"
+                                    className="bg-background border-border"
                                 />
                             </div>
 
@@ -292,19 +292,19 @@ const AdminUpload = () => {
                                     placeholder="important, formula, 2024"
                                     value={formData.tags}
                                     onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-                                    className="bg-slate-950 border-slate-800"
+                                    className="bg-background border-border"
                                 />
                             </div>
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-slate-900 border-slate-800">
+                    <Card className="bg-card border-border">
                         <CardHeader>
                             <CardTitle>Rich Content</CardTitle>
                             <CardDescription>Add detailed notes, explanations, and formatted text.</CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <div className="bg-white rounded-lg text-black">
+                            <div className="rounded-lg overflow-hidden">
                                 <ReactQuill
                                     theme="snow"
                                     value={content}
@@ -316,13 +316,13 @@ const AdminUpload = () => {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-slate-900 border-slate-800">
+                    <Card className="bg-card border-border">
                         <CardHeader>
                             <CardTitle>PDF Documents</CardTitle>
                             <CardDescription>Upload multiple PDF notes or papers.</CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <div className="border-2 border-dashed border-slate-700 rounded-lg p-8 text-center hover:border-indigo-500 transition-colors cursor-pointer relative">
+                            <div className="border-2 border-dashed border-border rounded-lg p-8 text-center hover:border-indigo-500 transition-colors cursor-pointer relative">
                                 <input
                                     type="file"
                                     className="absolute inset-0 opacity-0 cursor-pointer"
@@ -330,7 +330,7 @@ const AdminUpload = () => {
                                     accept=".pdf"
                                     multiple
                                 />
-                                <div className="flex flex-col items-center text-slate-500">
+                                <div className="flex flex-col items-center text-muted-foreground">
                                     <Upload className="h-10 w-10 mb-2" />
                                     <p>Click to upload PDFs</p>
                                     <p className="text-xs mt-1">Multiple files allowed</p>
@@ -340,13 +340,13 @@ const AdminUpload = () => {
                             {/* Existing PDFs */}
                             {existingPdfs.length > 0 && (
                                 <div className="space-y-2">
-                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Existing Files</p>
+                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Existing Files</p>
                                     {existingPdfs.map((file, index) => (
-                                        <div key={`existing-${index}`} className="flex items-center justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
+                                        <div key={`existing-${index}`} className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
                                             <div className="flex items-center gap-3">
                                                 <FileText className="h-5 w-5 text-blue-400" />
                                                 <span className="text-sm truncate max-w-[200px]">{file.title}</span>
-                                                <span className="text-xs text-slate-500">(Existing)</span>
+                                                <span className="text-xs text-muted-foreground">(Existing)</span>
                                             </div>
                                             <Button variant="ghost" size="sm" onClick={() => removeExistingPdf(index)} className="text-red-500 hover:text-red-400">
                                                 <Trash2 className="h-4 w-4" />
@@ -359,13 +359,13 @@ const AdminUpload = () => {
                             {/* New Files */}
                             {files.length > 0 && (
                                 <div className="space-y-2">
-                                    <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider">New Files</p>
+                                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">New Files</p>
                                     {files.map((file, index) => (
-                                        <div key={`new-${index}`} className="flex items-center justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
+                                        <div key={`new-${index}`} className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
                                             <div className="flex items-center gap-3">
                                                 <FileText className="h-5 w-5 text-green-400" />
                                                 <span className="text-sm truncate max-w-[200px]">{file.name}</span>
-                                                <span className="text-xs text-slate-500">({(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                                                <span className="text-xs text-muted-foreground">({(file.size / 1024 / 1024).toFixed(2)} MB)</span>
                                             </div>
                                             <Button variant="ghost" size="sm" onClick={() => removeFile(index)} className="text-red-500 hover:text-red-400">
                                                 <Trash2 className="h-4 w-4" />
@@ -377,7 +377,7 @@ const AdminUpload = () => {
                         </CardContent>
                     </Card>
 
-                    <Card className="bg-slate-900 border-slate-800">
+                    <Card className="bg-card border-border">
                         <CardHeader>
                             <CardTitle>Recommended Videos</CardTitle>
                             <CardDescription>Add YouTube video links.</CardDescription>
@@ -388,13 +388,13 @@ const AdminUpload = () => {
                                     placeholder="Video Title"
                                     value={newVideo.title}
                                     onChange={(e) => setNewVideo({ ...newVideo, title: e.target.value })}
-                                    className="bg-slate-950 border-slate-800"
+                                    className="bg-background border-border"
                                 />
                                 <Input
                                     placeholder="YouTube URL"
                                     value={newVideo.url}
                                     onChange={(e) => setNewVideo({ ...newVideo, url: e.target.value })}
-                                    className="bg-slate-950 border-slate-800"
+                                    className="bg-background border-border"
                                 />
                                 <Button onClick={addVideo} variant="secondary">
                                     <Plus className="h-4 w-4" />
@@ -404,12 +404,12 @@ const AdminUpload = () => {
                             {videos.length > 0 && (
                                 <div className="space-y-2">
                                     {videos.map((video, index) => (
-                                        <div key={index} className="flex items-center justify-between p-3 bg-slate-950 rounded-lg border border-slate-800">
+                                        <div key={index} className="flex items-center justify-between p-3 bg-background rounded-lg border border-border">
                                             <div className="flex items-center gap-3">
                                                 <Video className="h-5 w-5 text-red-500" />
                                                 <div className="flex flex-col">
                                                     <span className="text-sm font-medium">{video.title}</span>
-                                                    <span className="text-xs text-slate-500 truncate max-w-[200px]">{video.url}</span>
+                                                    <span className="text-xs text-muted-foreground truncate max-w-[200px]">{video.url}</span>
                                                 </div>
                                             </div>
                                             <Button variant="ghost" size="sm" onClick={() => removeVideo(index)} className="text-red-500 hover:text-red-400">
@@ -440,29 +440,29 @@ const AdminUpload = () => {
 
                 {/* Sidebar / Tips */}
                 <div className="space-y-6">
-                    <Card className="bg-slate-900 border-slate-800 sticky top-6">
+                    <Card className="bg-card border-border sticky top-6">
                         <CardHeader>
                             <CardTitle className="text-lg">Upload Checklist</CardTitle>
                         </CardHeader>
-                        <CardContent className="space-y-4 text-sm text-slate-400">
+                        <CardContent className="space-y-4 text-sm text-muted-foreground">
                             <div className="flex gap-3 items-start">
-                                <CheckCircle className={`h-5 w-5 ${formData.title ? 'text-green-500' : 'text-slate-700'}`} />
+                                <CheckCircle className={`h-5 w-5 ${formData.title ? 'text-green-500' : 'text-muted-foreground'}`} />
                                 <div>
-                                    <p className="font-medium text-slate-200">Topic Metadata</p>
+                                    <p className="font-medium text-foreground">Topic Metadata</p>
                                     <p>Title, Subject, and Class are required.</p>
                                 </div>
                             </div>
                             <div className="flex gap-3 items-start">
-                                <CheckCircle className={`h-5 w-5 ${content.length > 50 ? 'text-green-500' : 'text-slate-700'}`} />
+                                <CheckCircle className={`h-5 w-5 ${content.length > 50 ? 'text-green-500' : 'text-muted-foreground'}`} />
                                 <div>
-                                    <p className="font-medium text-slate-200">Rich Content</p>
+                                    <p className="font-medium text-foreground">Rich Content</p>
                                     <p>Add detailed notes with formatting.</p>
                                 </div>
                             </div>
                             <div className="flex gap-3 items-start">
-                                <CheckCircle className={`h-5 w-5 ${files.length > 0 || existingPdfs.length > 0 ? 'text-green-500' : 'text-slate-700'}`} />
+                                <CheckCircle className={`h-5 w-5 ${files.length > 0 || existingPdfs.length > 0 ? 'text-green-500' : 'text-muted-foreground'}`} />
                                 <div>
-                                    <p className="font-medium text-slate-200">PDF Resources</p>
+                                    <p className="font-medium text-foreground">PDF Resources</p>
                                     <p>Attach at least one PDF note.</p>
                                 </div>
                             </div>

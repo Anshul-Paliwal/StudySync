@@ -77,7 +77,7 @@ const Dashboard = () => {
   return (
     <div className="space-y-6 animate-fade-in">
       {/* Welcome Section */}
-      <div className="glass rounded-2xl p-8 relative overflow-hidden">
+      <div className="bg-card shadow-sm border rounded-2xl p-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-primary/10 rounded-full blur-3xl"></div>
         <div className="relative z-10">
           <h1 className="text-3xl md:text-4xl font-bold mb-2">Welcome back, {user?.name || 'Student'}! 👋</h1>
@@ -87,7 +87,7 @@ const Dashboard = () => {
 
       {/* Stats Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Card className="glass hover:shadow-glow transition-all duration-300">
+        <Card className="bg-card shadow-sm border hover:shadow-glow transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -101,7 +101,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="glass hover:shadow-glow transition-all duration-300">
+        <Card className="bg-card shadow-sm border hover:shadow-glow transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -115,7 +115,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="glass hover:shadow-glow transition-all duration-300">
+        <Card className="bg-card shadow-sm border hover:shadow-glow transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -129,7 +129,7 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        <Card className="glass hover:shadow-glow transition-all duration-300">
+        <Card className="bg-card shadow-sm border hover:shadow-glow transition-all duration-300">
           <CardContent className="p-6">
             <div className="flex items-center justify-between">
               <div>
@@ -146,7 +146,7 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Continue Learning */}
-        <Card className="glass">
+        <Card className="bg-card shadow-sm border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <BookOpen className="h-5 w-5 text-primary" />
@@ -172,10 +172,10 @@ const Dashboard = () => {
         </Card>
 
         {/* Upcoming Quizzes */}
-        <Card className="glass">
+        <Card className="bg-card shadow-sm border">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
-              <Clock className="h-5 w-5 text-secondary" />
+              <Clock className="h-5 w-5 text-orange-500" />
               Available Quizzes
             </CardTitle>
           </CardHeader>
@@ -201,7 +201,7 @@ const Dashboard = () => {
       </div>
 
       {/* Recent Activity */}
-      <Card className="glass">
+      <Card className="bg-card shadow-sm border">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <TrendingUp className="h-5 w-5 text-accent" />

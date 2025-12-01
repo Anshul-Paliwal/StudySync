@@ -137,7 +137,7 @@ const MaterialView = () => {
           </CardHeader>
           <CardContent>
             <div
-              className="prose prose-invert max-w-none text-slate-300"
+              className="prose prose-invert max-w-none text-foreground prose-p:text-foreground prose-headings:text-foreground prose-strong:text-foreground prose-ul:text-foreground prose-ol:text-foreground"
               dangerouslySetInnerHTML={{ __html: material.content }}
             />
           </CardContent>

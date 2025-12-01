@@ -208,7 +208,7 @@ const Materials = () => {
               {subjectGroups.map((group) => (
                 <Card
                   key={group.name}
-                  className="glass hover:shadow-glow transition-all duration-300 hover:-translate-y-1 cursor-pointer group h-64 flex flex-col items-center justify-center text-center relative overflow-hidden"
+                  className="bg-card shadow-sm border hover:shadow-glow transition-all duration-300 hover:-translate-y-1 cursor-pointer group h-64 flex flex-col items-center justify-center text-center relative overflow-hidden"
                   onClick={() => {
                     setSelectedSubject(group.name);
                     setViewMode("topic");
@@ -252,7 +252,7 @@ const Materials = () => {
 
                   if (layoutMode === "list") {
                     return (
-                      <Card key={material._id || index} className="glass hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate(`/materials/${material._id}`)}>
+                      <Card key={material._id || index} className="bg-card shadow-sm border hover:bg-muted/50 transition-colors cursor-pointer" onClick={() => navigate(`/materials/${material._id}`)}>
                         <CardContent className="p-4 flex items-center gap-4">
                           <div className={`w-10 h-10 rounded-lg ${color} flex items-center justify-center shrink-0`}>
                             <Icon className="h-5 w-5 text-white" />
@@ -291,7 +291,7 @@ const Materials = () => {
                   }
 
                   return (
-                    <Card key={material._id || index} className="glass hover:shadow-glow transition-all duration-300 hover:-translate-y-1 cursor-pointer">
+                    <Card key={material._id || index} className="bg-card shadow-sm border hover:shadow-glow transition-all duration-300 hover:-translate-y-1 cursor-pointer">
                       <CardContent className="p-6 space-y-4">
                         <div className="flex items-start justify-between">
                           <div className={`w-12 h-12 rounded-lg ${color} flex items-center justify-center`}>

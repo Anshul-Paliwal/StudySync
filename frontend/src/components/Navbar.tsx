@@ -88,10 +88,8 @@ export const Navbar = ({ onMenuClick, showMenuButton = false, hideGetStarted = f
               </Button>
             )}
             <NavLink to="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg gradient-primary flex items-center justify-center text-white font-bold">
-                S
-              </div>
-              <span className="text-xl font-bold bg-clip-text text-transparent gradient-primary">
+              <img src="/icon.png" alt="StudySync" className="w-8 h-8 rounded-lg" />
+              <span className="text-xl font-extrabold text-primary tracking-tight">
                 StudySync
               </span>
             </NavLink>

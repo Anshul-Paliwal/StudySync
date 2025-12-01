@@ -45,15 +45,15 @@ export const AdminGate = () => {
     }
 
     return (
-        <div className="min-h-screen bg-slate-950 flex items-center justify-center p-4 animate-fade-in">
-            <Card className="w-full max-w-md bg-slate-900 border-slate-800 shadow-2xl">
+        <div className="min-h-screen bg-background flex items-center justify-center p-4 animate-fade-in">
+            <Card className="w-full max-w-md bg-card border-border shadow-2xl">
                 <CardHeader className="text-center space-y-4">
                     <div className="mx-auto w-16 h-16 rounded-full bg-indigo-500/10 flex items-center justify-center">
                         <Shield className="h-8 w-8 text-indigo-500" />
                     </div>
                     <div>
-                        <CardTitle className="text-2xl text-white">Admin Access</CardTitle>
-                        <CardDescription className="text-slate-400">
+                        <CardTitle className="text-2xl text-foreground">Admin Access</CardTitle>
+                        <CardDescription className="text-muted-foreground">
                             Enter your SAP ID to verify your identity.
                         </CardDescription>
                     </div>
@@ -62,13 +62,13 @@ export const AdminGate = () => {
                     <form onSubmit={handleLogin} className="space-y-4">
                         <div className="space-y-2">
                             <div className="relative">
-                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-500" />
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                 <Input
                                     type="password"
                                     placeholder="Enter Admin ID"
                                     value={inputID}
                                     onChange={(e) => setInputID(e.target.value)}
-                                    className="pl-10 bg-slate-950 border-slate-800 text-white placeholder:text-slate-600 focus:border-indigo-500"
+                                    className="pl-10 bg-background border-border text-foreground placeholder:text-muted-foreground focus:border-indigo-500"
                                 />
                             </div>
                         </div>
